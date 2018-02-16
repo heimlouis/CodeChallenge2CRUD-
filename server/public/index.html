@@ -11,12 +11,24 @@
     <input type='text' id='whoseJoke' placeholder='whose joke' />
     <input type='text' id='question' placeholder='question' />
     <input type='text' id='punchLine' placeholder='punchline' />
+    <input type='number' id='funninessRating' placeholder='funniness rating' />
+    <input type='text' id='dateAdded' placeholder='date added' />
     <button id='addJokeButton'>Add Joke</button>
     <h2>Jokes:</h2>
     <div>
-      <ol id='outputDiv'>
-
-      </ol>
+      <table>
+        <thead>
+          <tr>
+            <th>Whose Joke</th>
+            <th>Question</th>
+            <th>Punch Line</th>
+            <th>Funniness Rating</th>
+            <th>Date Added</th>
+          </tr>
+        </thead>
+        <tbody id="individualJoke">
+        </tbody>
+      </table>
     </div>
   </body>
 </html>

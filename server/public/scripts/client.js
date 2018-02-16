@@ -1,72 +1,76 @@
 console.log('client.js sourced');
 
+//start onReady
 $( document ).ready( onReady );
 
 function onReady() {
     console.log('DOM ready');
     $('#addJokeButton').on('click', addJokeButtonClick);
     getJokes();
+}//end onReady
 
-    //add post
+//start addJokeButtonClick
+function addJokeButtonClick() {
+    console.log('joke button clicked!')
+    var objectToSend = {
+        whose_joke: $('#whoseJoke').val(),
+        question: $('#question').val(),
+        punch_line: $('#punchLine').val(),
+        funniness_rating: $('#funninessRating').val(),
+        date_added: $('#dateAdded').val()
+    };
+    saveJoke(objectToSend);
+}//end addJokeButtonClick
 
-    function addJokeButtonClick() {
-        console.log('joke button clicked!')
-        var data = {};
-    
-        data.whoseJoke = $('#whoseJoke').val();
-        data.question = $('#question').val();
-        data.punchLine = $('#punchLine').val();
-    
-        $.ajax({
+//start saveJoke
+function saveJoke(newJoke){
+    console.log('in save new joke', newJoke);
+    $.ajax({
         type: 'POST',
         url: '/joke',
-        data: data,
-        success: function() {
-            console.log("success on post!")
+        data: newJoke,
+        success: function(data){
+            console.log('got some jokes in save:', data);
             getJokes();
         },
-        error: function() {
-            console.error("failure on post!")
-            //dont make the getHistory call
-        }    
-        })
-        //make actual request
-        //display result
-    }
-
-    function getJokes(){
-
-        $.ajax({
-            type: 'GET',
-            url: '/joke',
-            success: function(result){
-                console.log('success on getJokes GET', result);
-                displayResults(result); 
-            },
-            error: function(){
-                console.error('failure on the getJokes GET');
-            },
-        })
-
-        function displayResults(results){
-            const htmlArray = [];
-            //loop through the results
-            for (let i = 0; i < results.length; i++) {
-                let data = results[i];
-                //get the data off the object and into html
-                const htmlString = 
-                '<li>' +
-                data.whoseJoke + ' ' + 
-                data.question + ' ' + 
-                data.punchLine + ' ' +
-                '</li>';
-                
-                htmlArray.push(htmlString);
-            }
-            $('#outputDiv').empty().append(htmlArray)
+        error: function(error){
+            console.log('failuer on saveJoke POST');
         }
+    });
+}//end saveJoke
+    
+//start getJokes
+function getJokes(){
+    console.log('in getJokes');
+    $.ajax({
+        type: 'GET',
+        url: '/joke',
+        success: function(result){
+            console.log('success on getJokes GET', result);
+            displayResults(result); 
+        },
+        error: function(){
+            console.error('failure on the getJokes GET');
+        },
+    })
+}//end getJokes
 
-    //add display results
-
+//start displayResults
+function displayResults(array){
+    console.log('in displayResults ', array);
+        $('#whoseJoke').val('');
+        $('#question').val('');
+        $('#punchLine').val('');
+        $('#funninessRating').val('');
+        $('#dateAdded').val('');
+        $('#outputDiv').empty();
+    for(i=0; i<array.length; i++){
+        let id = array[i].id;
+        let stringToAppend = `<tr class='individualJoke'><td>`;
+        stringToAppend += array[i].whose_joke+'</td><td>'+array[i].question+'</td><td>'+array[i].punch_line;
+        stringToAppend += '</td><td>'+array[i].funniness_rating+'</td><td>'+array[i].date_added;
+        stringToAppend += '</td><td>'+`<button class="deleteButton" id=${id}>Delete Joke</button>`;
+        stringToAppend += '</td>';
+    $('#individualJoke').append(stringToAppend);
     }
-}
+}//end displayResults
